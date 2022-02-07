@@ -1,19 +1,47 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { Container } from '@mui/material';
-import { AppContext } from './context/AppContext';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
+import axios from 'axios';
+import socketIOClient from "socket.io-client";
+
+const ENDPOINT = "wss://production-esocket.delta.exchange:8000";
 
 export const Data = (props) => {
-  const [state, dispatch] = useContext(AppContext);
+
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () =>{
+
+      try {
+        const {data: response} = await axios.get('https://api.delta.exchange/v2/products');
+        let data = [].concat.apply([], response.result.map(res => [{ "symbol": res.symbol, "desc": res.description, "unAsset": res.spot_index.config?.underlying_asset, "markPrice": res.strike_price}]))
+        setData(data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const io = socketIOClient(ENDPOINT);
+    io.connect()
+    io.on("v2/ticker", data => {
+      
+    });
+    
+  }, [])
 
   return  (
     <React.Fragment>
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Box sx={{ width: '100%' }}>
         <ReactTable
-          data={state.data}
+          data={data}
           columns={[
             {
               Header: "Symbol",
@@ -35,8 +63,8 @@ export const Data = (props) => {
             }
           ]}
           style={{
-            height: "400px", // This will force the table body to overflow and scroll, since there is not enough room
-            width: "400px"
+            height: "500px", 
+            width: "950px"
           }}
           defaultPageSize={50}
           className="-striped -highlight"

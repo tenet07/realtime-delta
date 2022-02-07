@@ -4,32 +4,6 @@ export const AppContext = createContext([]);
 
 const initialState = {
     activeStep: 0,
-    data: [
-      {
-        "symbol": 'A',
-        "desc": 'B',
-        "unAsset": 'C',
-        "markPrice": 'D'
-      },
-      {
-        "symbol": 'E',
-        "desc": 'F',
-        "unAsset": 'G',
-        "markPrice": 'H'
-      },
-      {
-        "symbol": 'I',
-        "desc": 'J',
-        "unAsset": 'K',
-        "markPrice": 'L'
-      },
-      {
-        "symbol": 'M',
-        "desc": 'N',
-        "unAsset": 'O',
-        "markPrice": 'P'
-      },
-    ]
 };
 
 export const reducer = (state, action) => {
